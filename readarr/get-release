@@ -1,0 +1,5 @@
+#!/bin/bash
+releases="$(curl -fsS https://api.github.com/repos/Readarr/Readarr/releases)"
+version="$(jq -r '.[0].name' <<<"${releases:?}")"
+url="$(jq -r '.[0].assets[]|select(.name|endswith(".linux-musl-core-x64.tar.gz"))|.browser_download_url' <<<"${releases:?}")"
+printf 'version=%s\nurl=%s\n' "${version:?}" "${url:?}" >>"${GITHUB_OUTPUT:?}"

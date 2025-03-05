@@ -1,0 +1,75 @@
+# yamllint disable rule:line-length
+---
+name: Build & Publish
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+permissions:
+  attestations: write
+  contents: read
+  id-token: write
+  packages: write
+
+concurrency:
+  cancel-in-progress: true
+  group: ${{ github.workflow }}
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - id: get-release
+        run: |
+          ${{ matrix.image }}/get-release
+
+      - uses: docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567 # v3.3.0
+        with:
+          password: ${{ secrets.GITHUB_TOKEN }}
+          registry: ghcr.io
+          username: ${{ github.actor }}
+
+      - uses: docker/setup-buildx-action@b5ca514318bd6ebac0fb2aedd5d36ec1b5c232a2 # v3.10.0
+
+      - id: metadata
+        uses: docker/metadata-action@902fa8ec7d6ecbf8d84d538b9b233a880e428804 # v5.7.0
+        with:
+          images: ghcr.io/${{ github.repository_owner }}/${{ matrix.image }}
+          tags: |
+            type=raw,value=${{ steps.get-release.outputs.version }}
+            type=raw,value=latest
+
+          # FIXME: type=raw,value=latest,enable={{is_default_branch}}
+
+      - id: push
+        uses: docker/build-push-action@471d1dc4e07e5cdedd4c2171150001c434f0b7a4 # v6.15.0
+        with:
+          build-args:
+            RELEASE_URL=${{ steps.get-release.outputs.url }}
+          context: ${{ matrix.image }}
+          labels: ${{ steps.metadata.outputs.labels }}
+          platforms: linux/amd64
+          push: true # FIXME: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.metadata.outputs.tags }}
+
+      - uses: actions/attest-build-provenance@bd77c077858b8d561b7a36cbe48ef4cc642ca39d # v2.2.2
+        with:
+          push-to-registry: true # FIXME: ${{ github.event_name != 'pull_request' }}
+          subject-digest: ${{ steps.push.outputs.digest }}
+          subject-name: ghcr.io/${{ github.repository_owner }}/${{ matrix.image }}
+
+    strategy:
+      matrix:
+        image:
+          - prowlarr
+          - radarr
+          - readarr
+          - sonarr
