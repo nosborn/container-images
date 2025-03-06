@@ -1,5 +1,6 @@
-FROM debian:12.9
+FROM debian:12.9-slim
 
+ENV DEBIAN_FRONTEND=noninteractive
 ARG RELEASE_URL
 
 ENV HOME=/config
