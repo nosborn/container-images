@@ -1,9 +1,39 @@
-FROM debian:12.9-slim
+FROM debian:12.9 AS build
 
-ENV DEBIAN_FRONTEND=noninteractive
+ARG DEBIAN_FRONTEND=noninteractive
 ARG PAR2_VERSION=1.2.0
 ARG RELEASE_URL
-ARG UNRAR_VERSION=5.2.5
+ARG UNRAR_VERSION=7.1.5
+
+ENV HOME=/config
+ENV PYTHONIOENCODING=utf-8
+
+RUN \
+  apt-get update && \
+  apt-get install -y --no-install-recommends \
+    build-essential \
+    ca-certificates \
+    curl \
+    python3 \
+    python3-venv \
+    xz-utils && \
+  mkdir -p /tmp/par2 && \
+  cd /tmp/par2 && \
+  curl -fLOsS "https://github.com/animetosho/par2cmdline-turbo/releases/download/v${PAR2_VERSION}/par2cmdline-turbo-v${PAR2_VERSION}-linux-amd64.xz" && \
+  xz -dv "par2cmdline-turbo-v${PAR2_VERSION}-linux-amd64.xz" && \
+  install -m555 -v "par2cmdline-turbo-v${PAR2_VERSION}-linux-amd64" /usr/local/bin/par2 && \
+  mkdir -p /tmp/unrar && \
+  cd /tmp/unrar && \
+  curl -fsS "https://www.rarlab.com/rar/unrarsrc-${UNRAR_VERSION}.tar.gz" | tar -xzf - --strip-components=1 && \
+  sed -i 's|CXXFLAGS=-march=native |CXXFLAGS=|' makefile && \
+  sed -i 's|LDFLAGS=-pthread|LDFLAGS=-pthread -static|' makefile && \
+  make && \
+  install -m755 -v unrar /usr/local/bin/unrar
+
+FROM debian:12.9-slim
+
+ARG DEBIAN_FRONTEND=noninteractive
+ARG RELEASE_URL
 
 ENV HOME=/config
 ENV PYTHONIOENCODING=utf-8
@@ -17,18 +47,11 @@ RUN \
     python3 \
     python3-venv \
     xz-utils && \
-  curl -fLOsS "https://github.com/animetosho/par2cmdline-turbo/releases/download/v${PAR2_VERSION}/par2cmdline-turbo-v${PAR2_VERSION}-linux-amd64.xz" && \
-  xz -dv "par2cmdline-turbo-v${PAR2_VERSION}-linux-amd64.xz" && \
-  mv "par2cmdline-turbo-v${PAR2_VERSION}-linux-amd64" /usr/local/bin/par2 && \
-  chmod 0555 /usr/local/bin/par2 && \
-  par2 --version && \
-  curl -fOsS "https://www.rarlab.com/rar/unrar_${UNRAR_VERSION}-0.1_amd64.deb" && \
-  dpkg -i "unrar_${UNRAR_VERSION}-0.1_amd64.deb" && \
-  rm "unrar_${UNRAR_VERSION}-0.1_amd64.deb" && \
   mkdir -p /app && \
-  curl -fLsS "${RELEASE_URL}" | tar -C /app -xzf - --strip-components=1 && \
-  python3 -m venv /app/venv && \
-  /app/venv/bin/python3 -m pip install -r /app/requirements.txt && \
+  cd /app && \
+  curl -fLsS "${RELEASE_URL}" | tar -xzf - --strip-components=1 && \
+  python3 -m venv venv && \
+  ./venv/bin/python3 -m pip install -r requirements.txt && \
   apt-get clean && \
   rm -rf \
     ${HOME}/.cache \
@@ -42,4 +65,4 @@ VOLUME /config/
 VOLUME /media/
 WORKDIR /app
 
-ENTRYPOINT ["/app/venv/bin/python3", "-OO", "SABnzbd.py", "--config-file=/config"]
+ENTRYPOINT ["/app/venv/bin/python3", "-OO", "SABnzbd.py", "--browser=0", "--config-file=/config", "--disable-file-log", "--logging=1"]
