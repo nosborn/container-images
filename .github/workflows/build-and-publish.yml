@@ -76,4 +76,5 @@ jobs:
           - prowlarr
           - radarr
           - readarr
+          - sabnzbd
           - sonarr
