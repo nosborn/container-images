@@ -45,7 +45,8 @@ RUN \
 
 EXPOSE 8080
 
-VOLUME /config
+VOLUME /config/
+VOLUME /config/.cache
 VOLUME /media
 
-ENTRYPOINT ["/usr/bin/calibre-server", "/media/Books"]
+ENTRYPOINT ["/usr/bin/calibre-server", "--enable-local-write", "/media/Books"]
