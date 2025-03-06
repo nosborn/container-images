@@ -1,0 +1,4 @@
+#!/bin/bash
+version="$(curl -fsS https://api.github.com/repos/kovidgoyal/calibre/releases | jq -r '.[0].tag_name' | sed 's/^v//')"
+url="https://download.calibre-ebook.com/${version:?}/calibre-${version:?}-x86_64.txz"
+printf 'version=%s\nurl=%s\n' "${version:?}" "${url:?}" >>"${GITHUB_OUTPUT:?}"
