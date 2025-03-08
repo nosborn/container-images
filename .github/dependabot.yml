@@ -3,7 +3,27 @@ version: 2
 
 updates:
   - package-ecosystem: docker
-    directory: /
+    directory: /calibre/
+    schedule:
+      interval: daily
+
+  - package-ecosystem: docker
+    directory: /radarr/
+    schedule:
+      interval: daily
+
+  - package-ecosystem: docker
+    directory: /readarr/
+    schedule:
+      interval: daily
+
+  - package-ecosystem: docker
+    directory: /sabnzbd/
+    schedule:
+      interval: daily
+
+  - package-ecosystem: docker
+    directory: /sonarr/
     schedule:
       interval: daily
 
