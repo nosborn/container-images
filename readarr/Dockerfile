@@ -11,9 +11,4 @@ RUN \
   curl -fLsS "${RELEASE_URL}" | tar -C /app -xzf - --exclude=Readarr.Update --strip-components=1
 
 EXPOSE 8787
-
-VOLUME /config
-VOLUME /media
-VOLUME /run/readarr-temp
-
-ENTRYPOINT ["/app/Readarr", "-data=/config", "-nobrowser"]
+ENTRYPOINT ["/app/Readarr"]

@@ -45,9 +45,4 @@ RUN \
     /var/tmp/*
 
 EXPOSE 8080
-
-VOLUME /config/
-VOLUME /config/.cache
-VOLUME /media
-
 ENTRYPOINT ["/usr/bin/calibre-server"]

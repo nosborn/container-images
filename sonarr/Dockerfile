@@ -11,9 +11,4 @@ RUN \
   curl -fLsS "${RELEASE_URL}" | tar -C /app -xzf - --exclude=Sonarr.Update --strip-components=1
 
 EXPOSE 8989
-
-VOLUME /config
-VOLUME /media
-VOLUME /run/sonarr-temp
-
-ENTRYPOINT ["/app/Sonarr", "-data=/config", "-nobrowser"]
+ENTRYPOINT ["/app/Sonarr"]

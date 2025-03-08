@@ -62,9 +62,5 @@ RUN \
     /var/tmp/*
 
 EXPOSE 8080
-
-VOLUME /config/
-VOLUME /media/
 WORKDIR /app
-
-ENTRYPOINT ["/app/venv/bin/python3", "-OO", "SABnzbd.py", "--browser=0", "--config-file=/config", "--disable-file-log", "--logging=1", "--server=0.0.0.0:8080"]
+ENTRYPOINT ["/app/venv/bin/python3", "-OO", "SABnzbd.py"]

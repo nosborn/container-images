@@ -11,9 +11,4 @@ RUN \
   curl -fLsS "${RELEASE_URL}" | tar -C /app -xzf - --exclude=Radarr.Update --strip-components=1
 
 EXPOSE 7878
-
-VOLUME /config
-VOLUME /media
-VOLUME /run/radarr-temp
-
-ENTRYPOINT ["/app/Radarr", "-data=/config", "-nobrowser"]
+ENTRYPOINT ["/app/Radarr"]
