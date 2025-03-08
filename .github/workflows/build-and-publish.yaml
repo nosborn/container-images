@@ -50,8 +50,7 @@ jobs:
             type=raw,value=${{ steps.get-release.outputs.version }}
             type=raw,value=latest,enable={{is_default_branch}}
 
-      - id: push
-        uses: docker/build-push-action@471d1dc4e07e5cdedd4c2171150001c434f0b7a4 # v6.15.0
+      - uses: docker/build-push-action@471d1dc4e07e5cdedd4c2171150001c434f0b7a4 # v6.15.0
         with:
           build-args:
             RELEASE_URL=${{ steps.get-release.outputs.url }}
@@ -60,17 +59,9 @@ jobs:
           context: ${{ matrix.image }}
           labels: ${{ steps.metadata.outputs.labels }}
           platforms: linux/amd64
+          provenance: mode=max
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.metadata.outputs.tags }}
-
-      - if: ${{ github.event_name != 'pull_request' }}
-        uses: actions/attest-build-provenance@c074443f1aee8d4aeeae555aebba3282517141b2 # v2.2.3
-        with:
-          predicate: '{"purl":"pkg:oci/..."}'
-          predicate-type: https://in-toto.io/attestation/release/v0.1
-          push-to-registry: true
-          subject-digest: ${{ steps.push.outputs.digest }}
-          subject-name: ghcr.io/${{ github.repository_owner }}/${{ matrix.image }}
 
     strategy:
       matrix:

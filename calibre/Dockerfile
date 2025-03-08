@@ -1,48 +1,14 @@
-FROM debian:12.9-slim
-
-ENV DEBIAN_FRONTEND=noninteractive
-ARG RELEASE_URL
+FROM alpine:3.21
 
 ENV HOME=/config
-ENV TITLE=Calibre
 ENV QTWEBENGINE_DISABLE_SANDBOX=1
+ENV TITLE=Calibre
 
 RUN \
-  apt-get update && \
-  apt-get install -y --no-install-recommends \
-    ca-certificates \
-    curl \
-    dbus \
-    fcitx-rime \
-    fonts-wqy-microhei \
-    libnss3 \
-    libopengl0 \
-    libqpdf29 \
-    libxcb-cursor0 \
-    libxcb-icccm4 \
-    libxcb-image0 \
-    libxcb-keysyms1 \
-    libxcb-randr0 \
-    libxcb-render-util0 \
-    libxcb-xinerama0 \
-    libxkbcommon-x11-0 \
-    poppler-utils \
-    python3 \
-    python3-xdg \
-    ttf-wqy-zenhei \
-    wget \
-    xz-utils && \
-  apt-get install -y \
-    speech-dispatcher && \
-  mkdir -p /opt/calibre && \
-  curl -fLsS "${RELEASE_URL}" | tar xJof - -C /opt/calibre && \
-  /opt/calibre/calibre_postinstall && \
-  apt-get clean && \
-  dbus-uuidgen >/etc/machine-id && \
-  rm -rf \
-    /tmp/* \
-    /var/lib/apt/lists/* \
-    /var/tmp/*
+  apk add --no-cache --repository=http://dl-cdn.alpinelinux.org/alpine/edge/community/ \
+    qt6-qtbase-private-dev && \
+  apk add --no-cache --repository=http://dl-cdn.alpinelinux.org/alpine/edge/testing/ \
+    calibre
 
 EXPOSE 8080
 ENTRYPOINT ["/usr/bin/calibre-server"]
