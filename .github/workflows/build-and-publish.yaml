@@ -24,7 +24,28 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
 
 jobs:
+  changed-images:
+    runs-on: ubuntu-latest
+    outputs:
+      names: ${{ steps.changed-images.outputs.names }}
+
+    steps:
+      - id: changed-files
+        uses: tj-actions/changed-files@dcc7a0cba800f454d79fff4b993e8c3555bcc0a8 # v45.0.7
+        with:
+          dir_names: true
+          dir_names_exclude_current_dir: true
+
+      - id: changed-images
+        run: |
+          jq . <<<"${CHANGED_FILES}"
+          printf 'names=[]\n' >>"${GITHUB_OUTPUT}"
+        env:
+          CHANGED_FILES: ${{ steps.changed-files.outputs.all_modified_files }}
+
   build-and-publish:
+    needs:
+      - changed-images
     runs-on: ubuntu-latest
 
     steps:
@@ -59,7 +80,6 @@ jobs:
           context: ${{ matrix.image }}
           labels: ${{ steps.metadata.outputs.labels }}
           platforms: linux/amd64
-          provenance: mode=max
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.metadata.outputs.tags }}
 
