@@ -67,8 +67,8 @@ jobs:
       matrix:
         image:
           - calibre
+          - nzbget
           - prowlarr
           - radarr
           - readarr
-          - sabnzbd
           - sonarr
