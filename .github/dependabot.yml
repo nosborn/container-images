@@ -23,11 +23,6 @@ updates:
       interval: daily
 
   - package-ecosystem: docker
-    directory: /sabnzbd/
-    schedule:
-      interval: daily
-
-  - package-ecosystem: docker
     directory: /sonarr/
     schedule:
       interval: daily

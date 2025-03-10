@@ -1,4 +1,0 @@
-#!/bin/bash
-version="$(curl -fsS https://api.github.com/repos/sabnzbd/sabnzbd/releases/latest | jq -r '.tag_name')"
-url="https://github.com/sabnzbd/sabnzbd/releases/download/${version:?}/SABnzbd-${version:?}-src.tar.gz"
-printf 'version=%s\nurl=%s\n' "${version:?}" "${url:?}" >>"${GITHUB_OUTPUT:?}"
