@@ -1,2 +1,10 @@
 #!/bin/bash
-printf 'version=NONE\nurl=NONE\n' >>"${GITHUB_OUTPUT:?}"
+
+set -euo pipefail
+
+release="$(curl -fsS https://api.github.com/repos/nzbgetcom/nzbget/releases/latest)"
+readonly release
+
+version="$(jq -r '.tag_name' <<<"${release:?}" | sed 's/^v//')"
+url="$(jq -r '.assets[] | select(.name | endswith("-bin-linux.run")) | .browser_download_url' <<<"${release:?}")"
+printf 'version=%s\nurl=%s\n' "${version:?}" "${url:?}" >>"${GITHUB_OUTPUT:?}"
