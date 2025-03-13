@@ -1,0 +1,2 @@
+#!/bin/bash
+printf 'version=%s\nurl=%s\n' "" "" >>"${GITHUB_OUTPUT:?}"
