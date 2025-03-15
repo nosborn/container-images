@@ -17,7 +17,10 @@ RUN \
   && curl -fLOsS "${url:?}" \
   && calibre-customize --add-plugin "$(basename "${url:?}")" \
   && rm "$(basename "${url:?}")" \
-  && url="$(curl -fsS https://api.github.com/repos/noDRM/DeDRM_tools/releases/latest | jq -r '.assets[]|select(.name|endswith(".zip"))|.browser_download_url')" \
+  && url="$( \
+       curl -fsS https://api.github.com/repos/noDRM/DeDRM_tools/releases/latest \
+         | jq -r '.assets[]|select(.name|endswith(".zip"))|.browser_download_url' \
+     )" \
   && curl -fLOsS "${url:?}" \
   && unzip "$(basename "${url:?}")" DeDRM_plugin.zip \
   && rm "$(basename "${url}")" \

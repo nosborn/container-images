@@ -11,8 +11,12 @@ RUN \
        sqlite-libs \
        xmlstarlet \
   && mkdir -p /app \
-  && url="$(curl -fsS https://api.github.com/repos/Radarr/Radarr/releases/latest | jq -r '.assets[]|select(.name|endswith(".linux-musl-core-x64.tar.gz"))|.browser_download_url')" \
-  && curl -fLsS "${url:?}" | tar -C /app -xzf - --exclude=Radarr.Update --strip-components=1
+  && url="$( \
+       curl -fsS https://api.github.com/repos/Radarr/Radarr/releases/latest \
+         | jq -r '.assets[]|select(.name|endswith(".linux-musl-core-x64.tar.gz"))|.browser_download_url' \
+     )" \
+  && curl -fLsS "${url:?}" \
+       | tar -C /app -xzf - --exclude=Radarr.Update --no-same-owner --strip-components=1
 
 EXPOSE 7878
 ENTRYPOINT ["/app/Radarr"]
