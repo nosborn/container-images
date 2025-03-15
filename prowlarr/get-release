@@ -1,4 +1,0 @@
-#!/bin/bash
-version="$(curl -fsS 'https://prowlarr.servarr.com/v1/update/master/changes?runtime=netcore&os=linuxmusl' | jq -r '.[0].version')"
-url="https://prowlarr.servarr.com/v1/update/master/updatefile?version=${version:?}&os=linuxmusl&runtime=netcore&arch=x64"
-printf 'version=%s\nurl=%s\n' "${version:?}" "${url:?}" >>"${GITHUB_OUTPUT:?}"

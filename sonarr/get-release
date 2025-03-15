@@ -1,4 +1,0 @@
-#!/bin/bash
-version="$(curl -fsS https://services.sonarr.tv/v1/releases | jq -r '.[]|select(.releaseChannel=="v4-stable")|.version')"
-url="https://services.sonarr.tv/v1/update/main/download?version=${version:?}&os=linuxmusl&runtime=netcore&arch=x64"
-printf 'version=%s\nurl=%s\n' "${version:?}" "${url:?}" >>"${GITHUB_OUTPUT:?}"
