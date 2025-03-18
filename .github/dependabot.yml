@@ -3,27 +3,19 @@ version: 2
 
 updates:
   - package-ecosystem: docker
-    directory: /calibre/
-    schedule:
-      interval: daily
-
-  - package-ecosystem: docker
-    directory: /nzbget/
-    schedule:
-      interval: daily
-
-  - package-ecosystem: docker
-    directory: /radarr/
-    schedule:
-      interval: daily
-
-  - package-ecosystem: docker
-    directory: /readarr/
-    schedule:
-      interval: daily
-
-  - package-ecosystem: docker
-    directory: /sonarr/
+    directories:
+      - /bazarr
+      - /calibre
+      - /nzbget
+      - /prowlarr
+      - /qbittorrent
+      - /radarr
+      - /readarr
+      - /sonarr
+    groups:
+      docker:
+        patterns:
+          - "*"
     schedule:
       interval: daily
 
