@@ -59,6 +59,7 @@ jobs:
     strategy:
       matrix:
         image:
+          - bazarr
           - calibre
           - nzbget
           - prowlarr
