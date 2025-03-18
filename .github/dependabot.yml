@@ -3,12 +3,27 @@ version: 2
 
 updates:
   - package-ecosystem: docker
+    directory: /bazarr/
+    schedule:
+      interval: daily
+
+  - package-ecosystem: docker
     directory: /calibre/
     schedule:
       interval: daily
 
   - package-ecosystem: docker
     directory: /nzbget/
+    schedule:
+      interval: daily
+
+  - package-ecosystem: docker
+    directory: /prowlarr/
+    schedule:
+      interval: daily
+
+  - package-ecosystem: docker
+    directory: /qbittorrent/
     schedule:
       interval: daily
 
